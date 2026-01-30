@@ -1,4 +1,4 @@
-package Esperimento1.chatGPT.smelly1Refactored;
+package Esperimento1.chatGPT.smell1Refactored;
 
 import java.util.Objects;
 import utility.*;

@@ -1,21 +1,22 @@
-package Esperimento1.Gemini.smelly1Refactored;
+package NotRefactored.smell2;
 
 import java.util.Objects;
 import utility.*;
 
-public class BankAccount {
+public class BankAccountSmelly {
 
     private final AccountHolder accountHolder;
     private final AccountID accountId;
     private Money balance;
-    private String accountStatus;
 
-    public BankAccount(AccountHolder accountHolder, AccountID accountId) {
+    public BankAccountSmelly(AccountHolder accountHolder, AccountID accountId) {
         this.accountHolder = Objects.requireNonNull(accountHolder, "Account holder must not be null.");
         this.accountId = Objects.requireNonNull(accountId, "Account ID must not be null.");
         this.balance = Money.ofCents(0);
-        // Assuming a default status upon creation
-        this.accountStatus = "OPEN"; 
+    }
+
+    public void updateContactInfo(String street, String city, String zipCode) {
+        System.out.println("Updating address: " + street + ", " + city + ", " + zipCode);
     }
 
     private void validatePositiveAmount(Money amount) {
@@ -24,23 +25,52 @@ public class BankAccount {
         }
     }
 
-    private boolean isAccountOpen() {
-        return !"CLOSED".equals(this.accountStatus);
-    }
-    
-    public void deposit(Money amount) {
-        validatePositiveAmount(amount);
-        
-        if (isAccountOpen()) {
-            this.balance = this.balance.add(amount);
-        }
+    public void setOwnerDetails(String firstName, String lastName, String middleName) {
+        System.out.println("Owner: " + firstName + " " + middleName + " " + lastName);
     }
 
-    private boolean isLoanAmountAcceptableForCreditScore(Money loanAmount, int creditScore) {
-        if (loanAmount.getAmountInCents() > 100000000 && creditScore < 750) {
+    public boolean verifyIdentity(String documentType, String documentNumber, String issuingCountry) {
+        return documentType != null && documentNumber != null && issuingCountry != null;
+    }
+
+    public void deposit(Money amount) {
+        validatePositiveAmount(amount);
+        this.balance = this.balance.add(amount);
+    }
+
+    public void withdraw(Money amount) {
+        validatePositiveAmount(amount);
+        this.balance = this.balance.subtract(amount);
+    }
+
+    public boolean authorizeTransaction(Money amount, String merchantName, String merchantCategory, String location, String currency, double conversionRate, boolean requiresPin, String transactionId) {
+        validatePositiveAmount(amount);
+
+        if (this.balance.getAmountInCents() < amount.getAmountInCents()) {
             return false;
         }
+        if (!currency.equals("USD")) {
+            long convertedAmount = Math.round(amount.getAmountInCents() * conversionRate);
+            amount = Money.ofCents(convertedAmount);
+        }
+        if (requiresPin) {
+            System.out.println("PIN verification required for transaction: " + transactionId);
+        }
+        System.out.println("Transaction authorized at " + merchantName + " (" + merchantCategory + ") in " + location);
         return true;
+    }
+
+    public void transferTo(BankAccountSmelly otherAccount, Money amount) {
+        Objects.requireNonNull(otherAccount, "Destination account must not be null.");
+
+        this.withdraw(amount);
+        otherAccount.deposit(amount);
+    }
+
+    public Money withdrawAll() {
+        Money amount = this.balance;
+        this.balance = Money.ofCents(0);
+        return amount;
     }
 
     public boolean validateAccountForLoan(Money loanAmount, int creditScore, int yearsOfHistory) {
@@ -61,50 +91,10 @@ public class BankAccount {
             return false;
         }
 
-        return isLoanAmountAcceptableForCreditScore(loanAmount, creditScore);
-    }
-
-    private boolean hasSufficientBalance(Money amount) {
-        return this.balance.getAmountInCents() >= amount.getAmountInCents();
-    }
-
-    public boolean authorizeTransaction(Money amount, String merchantName, String merchantCategory, String location, String currency, double conversionRate, boolean requiresPin, String transactionId) {
-        validatePositiveAmount(amount);
-        
-        if (!hasSufficientBalance(amount)) {
+        if (loanAmount.getAmountInCents() > 100000000 && creditScore < 750) {
             return false;
         }
-
-        if (!currency.equals("USD")) {
-            long convertedAmount = Math.round(amount.getAmountInCents() * conversionRate);
-            amount = Money.ofCents(convertedAmount);
-        }
-        if (requiresPin) {
-            System.out.println("PIN verification required for transaction: " + transactionId);
-        }
-        System.out.println("Transaction authorized at " + merchantName + " (" + merchantCategory + ") in " + location);
         return true;
-    }
-
-    public void withdraw(Money amount) {
-        validatePositiveAmount(amount);
-        if (!hasSufficientBalance(amount)) {
-            throw new IllegalStateException("Insufficient funds for withdrawal.");
-        }
-        this.balance = this.balance.subtract(amount);
-    }
-
-    public void transferTo(BankAccount otherAccount, Money amount) {
-        Objects.requireNonNull(otherAccount, "Destination account must not be null.");
-
-        this.withdraw(amount);
-        otherAccount.deposit(amount);
-    }
-
-    public Money withdrawAll() {
-        Money amount = this.balance;
-        this.balance = Money.ofCents(0);
-        return amount;
     }
 
     public Money getBalance() {
