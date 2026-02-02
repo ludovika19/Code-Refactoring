@@ -1,15 +1,15 @@
-package Esperimento1.Gemini.smell3Refactored;
+package Esperimento1.Gemini.smell4Refactored;
 
 import java.util.Objects;
 import utility.*;
 
-public class BankAccountClean {
+public class BankAccount {
 
     private final AccountHolder accountHolder;
     private final AccountID accountId;
     private Money balance;
 
-    public BankAccountClean(AccountHolder accountHolder, AccountID accountId) {
+    public BankAccount(AccountHolder accountHolder, AccountID accountId) {
         this.accountHolder = Objects.requireNonNull(accountHolder, "Account holder must not be null.");
         this.accountId = Objects.requireNonNull(accountId, "Account ID must not be null.");
         this.balance = Money.ofCents(0);
@@ -31,7 +31,7 @@ public class BankAccountClean {
         this.balance = this.balance.subtract(amount);
     }
 
-    public void transferTo(BankAccountSmelly otherAccount, Money amount) {
+    public void transferTo(BankAccount otherAccount, Money amount) {
         Objects.requireNonNull(otherAccount, "Destination account must not be null.");
 
         this.withdraw(amount);

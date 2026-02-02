@@ -1,20 +1,29 @@
-package Esperimento1.Gemini.smell3Refactored;
+package Esperimento1.chatGPT.smell4Refactored;
+
 
 import java.util.Objects;
 import utility.*;
 
-public class BankAccountClean {
+public class BankAccountSmelly {
 
     private final AccountHolder accountHolder;
     private final AccountID accountId;
     private Money balance;
 
-    public BankAccountClean(AccountHolder accountHolder, AccountID accountId) {
+    public BankAccountSmelly(AccountHolder accountHolder, AccountID accountId) {
         this.accountHolder = Objects.requireNonNull(accountHolder, "Account holder must not be null.");
         this.accountId = Objects.requireNonNull(accountId, "Account ID must not be null.");
         this.balance = Money.ofCents(0);
     }
 
+    /**
+     * Centralized validation for positive money amounts.
+     * This method is the result of Extract Method applied
+     * to the duplicated checks previously in:
+     * - validatePositiveAmount
+     * - validatePositiveAmountAgain
+     * - validatePositiveMoneyAmount
+     */
     private void validatePositiveAmount(Money amount) {
         if (!amount.isPositive()) {
             throw new IllegalArgumentException("Amount must be positive.");
@@ -24,6 +33,13 @@ public class BankAccountClean {
     public void deposit(Money amount) {
         validatePositiveAmount(amount);
         this.balance = this.balance.add(amount);
+    }
+
+    private void transferFundsTo(BankAccountSmelly destinationAccount, Money transferAmount) {
+        Objects.requireNonNull(destinationAccount, "Destination account must not be null.");
+
+        this.withdraw(transferAmount);
+        destinationAccount.deposit(transferAmount);
     }
 
     public void withdraw(Money amount) {

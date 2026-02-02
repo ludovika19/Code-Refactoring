@@ -1,15 +1,17 @@
-package Esperimento1.Gemini.smell3Refactored;
+package Esperimento1.ClaudeSonet.smell4Refactored;
+
+package smellybytype.unannotated.smell4;
 
 import java.util.Objects;
 import utility.*;
 
-public class BankAccountClean {
+public class BankAccountSmelly {
 
     private final AccountHolder accountHolder;
     private final AccountID accountId;
     private Money balance;
 
-    public BankAccountClean(AccountHolder accountHolder, AccountID accountId) {
+    public BankAccountSmelly(AccountHolder accountHolder, AccountID accountId) {
         this.accountHolder = Objects.requireNonNull(accountHolder, "Account holder must not be null.");
         this.accountId = Objects.requireNonNull(accountId, "Account ID must not be null.");
         this.balance = Money.ofCents(0);
@@ -24,6 +26,13 @@ public class BankAccountClean {
     public void deposit(Money amount) {
         validatePositiveAmount(amount);
         this.balance = this.balance.add(amount);
+    }
+
+    private void transferFundsTo(BankAccountSmelly destinationAccount, Money transferAmount) {
+        Objects.requireNonNull(destinationAccount, "Destination account must not be null.");
+
+        this.withdraw(transferAmount);
+        destinationAccount.deposit(transferAmount);
     }
 
     public void withdraw(Money amount) {

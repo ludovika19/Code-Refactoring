@@ -1,15 +1,16 @@
-package Esperimento1.Gemini.smell3Refactored;
+package NotRefactored.smell5;
 
 import java.util.Objects;
 import utility.*;
 
-public class BankAccountClean {
+public class BankAccountSmelly {
 
     private final AccountHolder accountHolder;
     private final AccountID accountId;
     private Money balance;
+    private BankBranch homeBranch;
 
-    public BankAccountClean(AccountHolder accountHolder, AccountID accountId) {
+    public BankAccountSmelly(AccountHolder accountHolder, AccountID accountId) {
         this.accountHolder = Objects.requireNonNull(accountHolder, "Account holder must not be null.");
         this.accountId = Objects.requireNonNull(accountId, "Account ID must not be null.");
         this.balance = Money.ofCents(0);
@@ -24,6 +25,22 @@ public class BankAccountClean {
     public void deposit(Money amount) {
         validatePositiveAmount(amount);
         this.balance = this.balance.add(amount);
+    }
+
+    public boolean canAffordPurchase(Money purchaseAmount) {
+        return this.balance.getAmountInCents() >= purchaseAmount.getAmountInCents();
+    }
+
+    public boolean isBalanceGreaterThan(Money threshold) {
+        return this.balance.getAmountInCents() > threshold.getAmountInCents();
+    }
+
+    public String checkBranchOperationalStatus(java.time.LocalTime now) {
+        if (this.homeBranch.isOpen(now) && this.homeBranch.hasStaff()) {
+            return "Branch is fully operational.";
+        } else {
+            return "Branch is currently closed or understaffed.";
+        }
     }
 
     public void withdraw(Money amount) {
