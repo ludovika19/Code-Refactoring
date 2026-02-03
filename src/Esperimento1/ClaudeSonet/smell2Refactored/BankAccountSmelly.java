@@ -1,8 +1,8 @@
 package Esperimento1.ClaudeSonet.smell2Refactored;
 
-import Esperimento1.chatGPT.smell2Refactored.classesForRefactorDataClumps.*;
 import java.util.Objects;
 import utility.*;
+import Esperimento1.ClaudeSonet.smell2Refactored.classForRefactorDataClumps.*;
 
 public class BankAccountSmelly {
 

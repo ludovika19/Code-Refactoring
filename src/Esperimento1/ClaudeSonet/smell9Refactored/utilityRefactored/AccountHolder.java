@@ -1,5 +1,6 @@
 
-package Esperimento1.chatGPT.smell5Refactored.utilityRefactored;
+package Esperimento1.ClaudeSonet.smell9Refactored.utilityRefactored;
+
 
 import java.util.Objects;
 
@@ -20,6 +21,15 @@ public final class AccountHolder {
 
     public String getName() {
         return name;
+    }
+
+       public ContactInfo getContactInfo() {
+        return contactInfo;
+    }
+    
+    // NEW: Hide Delegate method to eliminate message chain
+    public PhoneNumber getPrimaryPhoneNumber() {
+        return this.contactInfo.getPrimaryPhone().getNumber();
     }
 
     @Override

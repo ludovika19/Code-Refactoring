@@ -1,8 +1,7 @@
-package Esperimento1.ClaudeSonet.smell5Refactored;
-
+package NotRefactored.smell9;
 
 import java.util.Objects;
-import Esperimento1.ClaudeSonet.smell5Refactored.utilityRefactored.*;;
+import utility.*;
 
 public class BankAccountSmelly {
 
@@ -28,20 +27,16 @@ public class BankAccountSmelly {
         this.balance = this.balance.add(amount);
     }
 
-    public boolean canAffordPurchase(Money purchaseAmount) {
-        return this.balance.isGreaterThanOrEqualTo(purchaseAmount);
+    public String getBranchManagerName() {
+        return this.homeBranch.getManager().getPersonalInfo().getName();
     }
 
-    public boolean isBalanceGreaterThan(Money threshold) {
-        return this.balance.isGreaterThan(threshold);
+    public String getBranchCity() {
+        return this.homeBranch.getAddress().getCity().getName();
     }
 
-    public String checkBranchOperationalStatus(java.time.LocalTime now) {
-        if (this.homeBranch.isFullyOperational(now)) {
-            return "Branch is fully operational.";
-        } else {
-            return "Branch is currently closed or understaffed.";
-        }
+    public PhoneNumber getAccountHolderPhoneNumber() {
+        return this.accountHolder.getContactInfo().getPrimaryPhone().getNumber();
     }
 
     public void withdraw(Money amount) {

@@ -1,4 +1,4 @@
-package Esperimento1.ClaudeSonet.smelly1Refactored;
+package Esperimento1.ClaudeSonet.smell1Refactored;
 
 
 import java.util.Objects;

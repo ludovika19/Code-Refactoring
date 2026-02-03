@@ -1,17 +1,16 @@
-package Esperimento1.ClaudeSonet.smell5Refactored;
-
+package Esperimento1.Gemini.smell9Refactored;
 
 import java.util.Objects;
-import Esperimento1.ClaudeSonet.smell5Refactored.utilityRefactored.*;;
+import utility.*;
 
-public class BankAccountSmelly {
+public class BankAccountRefactored {
 
     private final AccountHolder accountHolder;
     private final AccountID accountId;
     private Money balance;
     private BankBranch homeBranch;
 
-    public BankAccountSmelly(AccountHolder accountHolder, AccountID accountId) {
+    public BankAccountRefactored(AccountHolder accountHolder, AccountID accountId) {
         this.accountHolder = Objects.requireNonNull(accountHolder, "Account holder must not be null.");
         this.accountId = Objects.requireNonNull(accountId, "Account ID must not be null.");
         this.balance = Money.ofCents(0);
@@ -28,20 +27,19 @@ public class BankAccountSmelly {
         this.balance = this.balance.add(amount);
     }
 
-    public boolean canAffordPurchase(Money purchaseAmount) {
-        return this.balance.isGreaterThanOrEqualTo(purchaseAmount);
+    // Refactored: The chain is now hidden inside the BankBranch class.
+    public String getBranchManagerName() {
+        return this.homeBranch.getManagerName();
     }
 
-    public boolean isBalanceGreaterThan(Money threshold) {
-        return this.balance.isGreaterThan(threshold);
+    // Refactored: The chain is now hidden inside the BankBranch class.
+    public String getBranchCity() {
+        return this.homeBranch.getCityName();
     }
 
-    public String checkBranchOperationalStatus(java.time.LocalTime now) {
-        if (this.homeBranch.isFullyOperational(now)) {
-            return "Branch is fully operational.";
-        } else {
-            return "Branch is currently closed or understaffed.";
-        }
+    // Refactored: The chain is now hidden inside the AccountHolder class.
+    public PhoneNumber getAccountHolderPhoneNumber() {
+        return this.accountHolder.getPrimaryPhoneNumber();
     }
 
     public void withdraw(Money amount) {
@@ -49,7 +47,7 @@ public class BankAccountSmelly {
         this.balance = this.balance.subtract(amount);
     }
 
-    public void transferTo(BankAccountSmelly otherAccount, Money amount) {
+    public void transferTo(BankAccountRefactored otherAccount, Money amount) {
         Objects.requireNonNull(otherAccount, "Destination account must not be null.");
 
         this.withdraw(amount);

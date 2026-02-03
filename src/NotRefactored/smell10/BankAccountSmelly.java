@@ -1,15 +1,16 @@
-package Esperimento1.ClaudeSonet.smell5Refactored;
-
+package NotRefactored.smell10;
 
 import java.util.Objects;
-import Esperimento1.ClaudeSonet.smell5Refactored.utilityRefactored.*;;
+import utility.*;
 
 public class BankAccountSmelly {
 
     private final AccountHolder accountHolder;
     private final AccountID accountId;
     private Money balance;
-    private BankBranch homeBranch;
+    private TransactionLogger transactionLogger;
+    private AccountSecurityManager securityManager;
+    private NotificationService notificationService;
 
     public BankAccountSmelly(AccountHolder accountHolder, AccountID accountId) {
         this.accountHolder = Objects.requireNonNull(accountHolder, "Account holder must not be null.");
@@ -28,20 +29,16 @@ public class BankAccountSmelly {
         this.balance = this.balance.add(amount);
     }
 
-    public boolean canAffordPurchase(Money purchaseAmount) {
-        return this.balance.isGreaterThanOrEqualTo(purchaseAmount);
+    public boolean checkSecurityAlert(AccountID accountId) {
+        return this.securityManager.hasAlert(accountId);
     }
 
-    public boolean isBalanceGreaterThan(Money threshold) {
-        return this.balance.isGreaterThan(threshold);
+    public void sendNotification(NotificationMessage message) {
+        this.notificationService.send(message);
     }
 
-    public String checkBranchOperationalStatus(java.time.LocalTime now) {
-        if (this.homeBranch.isFullyOperational(now)) {
-            return "Branch is fully operational.";
-        } else {
-            return "Branch is currently closed or understaffed.";
-        }
+    public TransactionHistory getTransactionHistory() {
+        return this.transactionLogger.getHistory();
     }
 
     public void withdraw(Money amount) {

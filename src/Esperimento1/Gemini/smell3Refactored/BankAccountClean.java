@@ -31,7 +31,7 @@ public class BankAccountClean {
         this.balance = this.balance.subtract(amount);
     }
 
-    public void transferTo(BankAccountSmelly otherAccount, Money amount) {
+    public void transferTo(BankAccountClean otherAccount, Money amount) {
         Objects.requireNonNull(otherAccount, "Destination account must not be null.");
 
         this.withdraw(amount);

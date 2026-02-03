@@ -1,8 +1,7 @@
-package Esperimento1.ClaudeSonet.smell5Refactored;
-
+package Esperimento1.chatGPT.smell9Refactored;
 
 import java.util.Objects;
-import Esperimento1.ClaudeSonet.smell5Refactored.utilityRefactored.*;;
+import Esperimento1.chatGPT.smell9Refactored.utilityRefactored.*;
 
 public class BankAccountSmelly {
 
@@ -28,20 +27,19 @@ public class BankAccountSmelly {
         this.balance = this.balance.add(amount);
     }
 
-    public boolean canAffordPurchase(Money purchaseAmount) {
-        return this.balance.isGreaterThanOrEqualTo(purchaseAmount);
+    // Line 30 refactored: Hide Delegate on BankBranch / Manager / PersonalInfo
+    public String getBranchManagerName() {
+        return this.homeBranch.getManagerName();
     }
 
-    public boolean isBalanceGreaterThan(Money threshold) {
-        return this.balance.isGreaterThan(threshold);
+    // Line 34 refactored: Hide Delegate on BankBranch / Address / City
+    public String getBranchCity() {
+        return this.homeBranch.getCityName();
     }
 
-    public String checkBranchOperationalStatus(java.time.LocalTime now) {
-        if (this.homeBranch.isFullyOperational(now)) {
-            return "Branch is fully operational.";
-        } else {
-            return "Branch is currently closed or understaffed.";
-        }
+    // Line 38 refactored: Hide Delegate on AccountHolder / ContactInfo / PhoneNumber
+    public PhoneNumber getAccountHolderPhoneNumber() {
+        return this.accountHolder.getPrimaryPhoneNumber();
     }
 
     public void withdraw(Money amount) {

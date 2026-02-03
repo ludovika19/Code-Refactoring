@@ -1,7 +1,5 @@
 package Esperimento1.ClaudeSonet.smell4Refactored;
 
-package smellybytype.unannotated.smell4;
-
 import java.util.Objects;
 import utility.*;
 
