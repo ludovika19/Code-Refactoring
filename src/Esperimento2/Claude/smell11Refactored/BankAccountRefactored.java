@@ -1,9 +1,9 @@
-package Esperimento1.ClaudeSonet.smell11Refactored;
+package Esperimento2.Claude.smell11Refactored;
 
-import Esperimento1.ClaudeSonet.smell11Refactored.classForRefactorPROBS.*;
+
+import Esperimento2.Claude.smell11Refactored.classForRefactorPROBS.*;
 import java.util.Objects;
 import utility.*;
-import Esperimento1.ClaudeSonet.smell11Refactored.classForRefactorPROBS.*;
 
 public class BankAccountRefactored {
 
@@ -11,14 +11,14 @@ public class BankAccountRefactored {
     private final AccountID accountId;
     private Money balance;
     private AccountStatus accountStatus;
-    private int accountTypeCode;
+    private AccountType accountType;
 
     public BankAccountRefactored(AccountHolder accountHolder, AccountID accountId) {
         this.accountHolder = Objects.requireNonNull(accountHolder, "Account holder must not be null.");
         this.accountId = Objects.requireNonNull(accountId, "Account ID must not be null.");
         this.balance = Money.ofCents(0);
         this.accountStatus = AccountStatus.ACTIVE;
-        this.accountTypeCode = 1;
+        this.accountType = AccountType.fromCode(1);
     }
 
     private void validatePositiveAmount(Money amount) {
@@ -30,7 +30,7 @@ public class BankAccountRefactored {
     public void deposit(Money amount) {
         validatePositiveAmount(amount);
         
-        if (this.accountStatus.allowsDeposits()) {
+        if (!this.accountStatus.isClosed()) {
             this.balance = this.balance.add(amount);
         }
     }
@@ -43,15 +43,7 @@ public class BankAccountRefactored {
         statement.append("Statement Period: ").append(period).append("\n");
         statement.append("Current Balance: ").append(this.balance).append("\n");
         statement.append("------------------------\n");
-
-        if (this.accountTypeCode == 1) {
-            statement.append("Account Type: Checking\n");
-        } else if (this.accountTypeCode == 2) {
-            statement.append("Account Type: Savings\n");
-        } else {
-            statement.append("Account Type: Business\n");
-        }
-        
+        statement.append("Account Type: ").append(this.accountType.getDisplayName()).append("\n");
         statement.append("Interest Rate: 0.00%\n");
         statement.append("Monthly Fee: $0.00\n");
         statement.append("Overdraft Protection: No\n");
@@ -64,17 +56,14 @@ public class BankAccountRefactored {
     }
 
     public double getTransactionFee(TransactionType transactionType) {
-        Objects.requireNonNull(transactionType, "Transaction type must not be null.");
         return transactionType.getFee();
     }
 
     public int getMaxDailyWithdrawals(AccountTier accountTier) {
-        Objects.requireNonNull(accountTier, "Account tier must not be null.");
         return accountTier.getMaxDailyWithdrawals();
     }
 
     public String getRewardMultiplier(CardType cardType) {
-        Objects.requireNonNull(cardType, "Card type must not be null.");
         return cardType.getRewardMultiplier();
     }
 
@@ -106,6 +95,14 @@ public class BankAccountRefactored {
 
     public AccountID getAccountId() {
         return this.accountId;
+    }
+
+    public AccountStatus getAccountStatus() {
+        return this.accountStatus;
+    }
+
+    public AccountType getAccountType() {
+        return this.accountType;
     }
 
     @Override

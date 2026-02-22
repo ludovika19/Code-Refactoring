@@ -1,24 +1,27 @@
-package Esperimento1.ClaudeSonet.smell11Refactored;
+package Esperimento2.chatGPT.smell11Refactored;
 
-import Esperimento1.ClaudeSonet.smell11Refactored.classForRefactorPROBS.*;
 import java.util.Objects;
 import utility.*;
-import Esperimento1.ClaudeSonet.smell11Refactored.classForRefactorPROBS.*;
+import Esperimento2.chatGPT.smell11Refactored.classForRefactorPROBS.*;
 
 public class BankAccountRefactored {
 
     private final AccountHolder accountHolder;
     private final AccountID accountId;
     private Money balance;
+
+    // Replaced String primitive with enum AccountStatus
     private AccountStatus accountStatus;
-    private int accountTypeCode;
+
+    // Replaced int primitive with enum AccountType
+    private AccountType accountType;
 
     public BankAccountRefactored(AccountHolder accountHolder, AccountID accountId) {
         this.accountHolder = Objects.requireNonNull(accountHolder, "Account holder must not be null.");
         this.accountId = Objects.requireNonNull(accountId, "Account ID must not be null.");
         this.balance = Money.ofCents(0);
         this.accountStatus = AccountStatus.ACTIVE;
-        this.accountTypeCode = 1;
+        this.accountType = AccountType.CHECKING;
     }
 
     private void validatePositiveAmount(Money amount) {
@@ -29,13 +32,15 @@ public class BankAccountRefactored {
 
     public void deposit(Money amount) {
         validatePositiveAmount(amount);
-        
-        if (this.accountStatus.allowsDeposits()) {
+
+        // use domain behavior instead of literal comparison
+        if (!this.accountStatus.isClosed()) {
             this.balance = this.balance.add(amount);
         }
     }
 
-    public String generateAccountStatement(DateRange period) {
+    // Introduced parameter object StatementPeriod
+    public String generateAccountStatement(StatementPeriod period) {
         StringBuilder statement = new StringBuilder();
         statement.append("=== ACCOUNT STATEMENT ===\n");
         statement.append("Account ID: ").append(this.accountId).append("\n");
@@ -44,14 +49,9 @@ public class BankAccountRefactored {
         statement.append("Current Balance: ").append(this.balance).append("\n");
         statement.append("------------------------\n");
 
-        if (this.accountTypeCode == 1) {
-            statement.append("Account Type: Checking\n");
-        } else if (this.accountTypeCode == 2) {
-            statement.append("Account Type: Savings\n");
-        } else {
-            statement.append("Account Type: Business\n");
-        }
-        
+        // use AccountType instead of numeric codes
+        statement.append("Account Type: ").append(this.accountType.getDescription()).append("\n");
+
         statement.append("Interest Rate: 0.00%\n");
         statement.append("Monthly Fee: $0.00\n");
         statement.append("Overdraft Protection: No\n");
@@ -59,23 +59,68 @@ public class BankAccountRefactored {
         return statement.toString();
     }
 
+    // keep compatibility with original API if needed:
+    public String generateAccountStatement(String startDate, String endDate) {
+        return generateAccountStatement(new StatementPeriod(startDate, endDate));
+    }
+
+    // Replace string-based status with type-safe enum
     public void setAccountStatus(AccountStatus status) {
         this.accountStatus = Objects.requireNonNull(status, "Account status must not be null.");
     }
 
+    // Overload to preserve original string API, delegating to enum
+    public void setAccountStatus(String status) {
+        this.accountStatus = AccountStatus.fromString(status);
+    }
+
+    // Replace string type code with enum
     public double getTransactionFee(TransactionType transactionType) {
-        Objects.requireNonNull(transactionType, "Transaction type must not be null.");
-        return transactionType.getFee();
+        switch (transactionType) {
+            case WIRE:
+                return 25.00;
+            case ATM:
+                return 2.50;
+            case TRANSFER:
+                return 0.00;
+            case CHECK:
+                return 1.00;
+            default:
+                return 5.00;
+        }
+    }
+
+    // Compatibility wrapper for original string-based method
+    public double getTransactionFee(String transactionType) {
+        return getTransactionFee(TransactionType.fromString(transactionType));
     }
 
     public int getMaxDailyWithdrawals(AccountTier accountTier) {
-        Objects.requireNonNull(accountTier, "Account tier must not be null.");
-        return accountTier.getMaxDailyWithdrawals();
+        switch (accountTier) {
+            case BASIC:
+                return 3;
+            case STANDARD:
+                return 5;
+            case PREMIUM:
+                return 10;
+            case VIP:
+                return -1;
+            default:
+                return 1;
+        }
+    }
+
+    public int getMaxDailyWithdrawals(String accountTier) {
+        return getMaxDailyWithdrawals(AccountTier.fromString(accountTier));
     }
 
     public String getRewardMultiplier(CardType cardType) {
-        Objects.requireNonNull(cardType, "Card type must not be null.");
-        return cardType.getRewardMultiplier();
+        // logic is now encapsulated in CardType
+        return cardType.rewardMultiplier();
+    }
+
+    public String getRewardMultiplier(String cardType) {
+        return getRewardMultiplier(CardType.fromString(cardType));
     }
 
     public void withdraw(Money amount) {
@@ -108,10 +153,20 @@ public class BankAccountRefactored {
         return this.accountId;
     }
 
+    public AccountStatus getAccountStatus() {
+        return accountStatus;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
     @Override
     public String toString() {
         return "BankAccount[accountId=" + accountId +
                ", accountHolder=" + accountHolder +
-               ", balance=" + balance + " cents]";
+               ", balance=" + balance + " cents" +
+               ", status=" + accountStatus +
+               ", type=" + accountType + "]";
     }
 }
