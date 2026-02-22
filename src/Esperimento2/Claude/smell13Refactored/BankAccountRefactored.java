@@ -1,6 +1,7 @@
 package Esperimento2.Claude.smell13Refactored;
 
 
+import Esperimento2.Claude.smell13Refactored.classForRefactorSWST.*;
 import java.util.Objects;
 import utility.*;
 

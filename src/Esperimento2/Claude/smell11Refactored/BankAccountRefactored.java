@@ -1,6 +1,7 @@
 package Esperimento2.Claude.smell11Refactored;
 
 
+import Esperimento2.Claude.smell11Refactored.classForRefactorPROBS.*;
 import java.util.Objects;
 import utility.*;
 
