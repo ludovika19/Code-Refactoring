@@ -2,6 +2,7 @@ package Esperimento1.ClaudeSonet.smell11Refactored;
 
 import java.util.Objects;
 import utility.*;
+import Esperimento1.ClaudeSonet.smell11Refactored.classForRefactorPROBS.*;
 
 public class BankAccountRefactored {
 
